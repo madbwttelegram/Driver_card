@@ -465,7 +465,7 @@
 
     <ul class="nav-menu">
       <!-- التبويب الأول -->
-      <li class="nav-item" onclick="window.location.href='./index.html'"> <!-- SVG Icon: Card/Plus --> <svg
+      <li class="nav-item" onclick="window.location.href='./main.html'"> <!-- SVG Icon: Card/Plus --> <svg
           viewBox="0 0 24 24" focusable="false" aria-hidden="true">
           <path
             d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
@@ -739,7 +739,7 @@
     function logout() {
       if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
         sessionStorage.clear();
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
       }
     }
 
@@ -747,7 +747,7 @@
     window.onload = function () {
       const token = sessionStorage.getItem('authToken');
       if (!token) {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
       }
     }
     // دالة البحث البسيطة
