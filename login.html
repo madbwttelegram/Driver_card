@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - نظام إدارة البطاقات</title>
+
+    <!-- خط تجوال -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        /* بطاقة تسجيل الدخول */
+        .login-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* أيقونة أو شعار بسيط */
+        .login-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #8B3C45;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        h2 {
+            margin: 0 0 10px 0;
+            color: #8B3C45;
+            font-size: 22px;
+        }
+
+        p.subtitle {
+            margin: 0 0 30px 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            box-sizing: border-box; /* لضمان أن الـ padding لا يكسر العرض */
+        }
+
+        input:focus {
+            border-color: #8B3C45;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 60, 69, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: #8B3C45;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #703038;
+        }
+
+        /* رسالة الخطأ */
+        .error-message {
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: none; /* مخفي افتراضياً */
+            border: 1px solid #ffcdd2;
+        }
+
+        /* تذييل بسيط */
+        .footer-note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <!-- أيقونة بسيطة تمثل النظام -->
+        <div class="login-icon">
+            DC
+        </div>
+
+        <h2>نظام إدارة البطاقات</h2>
+        <p class="subtitle">الرجاء تسجيل الدخول للمتابعة</p>
+
+        <!-- منطقة عرض الأخطاء -->
+        <div id="error-msg" class="error-message"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="btn-login">تسجيل الدخول</button>
+        </form>
+
+        <div class="footer-note">
+            جميع الحقوق محفوظة &copy; 2026 نظام إدارة البطاقات
+        </div>
+    </div>
+
+    <script>
+        // المنطق البسيط للتحقق من الدخول
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // منع إعادة تحميل الصفحة
+
+            // جلب القيم
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMsgDiv = document.getElementById('error-msg');
+
+            // التحقق من البيانات الافتراضية (Mock Authentication)
+            if (username === 'admin' && password === 'admin') {
+                // 1. تسجيل نجاح الدخول في جلسة المتصفح (Session Storage)
+                sessionStorage.setItem('authToken', 'valid_token_123'); // رمز وهمي
+                sessionStorage.setItem('currentUser', 'admin');
+                sessionStorage.setItem('userRole', 'admin');
+
+                // 2. تنفيذ الانتقال للوحة التحكم
+                window.location.href = 'dashboard.html';
+            } else {
+                // عرض رسالة الخطأ
+                errorMsgDiv.textContent = "اسم المستخدم أو كلمة المرور غير صحيحة";
+                errorMsgDiv.style.display = 'block';
+
+                // إخفاء الرسالة بعد 3 ثواني
+                setTimeout(() => {
+                    errorMsgDiv.style.display = 'none';
+                }, 3000);
+            }
+        });
+    </script>
+
+</body>
+</html>

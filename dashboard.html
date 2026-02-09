@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - نظام البطاقات</title>
+
+  <style>
+    :root {
+      --primary-color: #8B3C45;
+      /* اللون البرونزي المميز */
+      --primary-dark: #6e3137;
+      --sidebar-bg: #1e293b;
+      /* كحلي داكن عصري */
+      --sidebar-hover: #334155;
+      --bg-color: #f1f5f9;
+      /* رمادي فاتح جداً للخلفية */
+      --text-color: #1e293b;
+      --text-muted: #64748b;
+      --white: #ffffff;
+      --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ================= SIDEBAR ================= */
+    .sidebar {
+      width: 280px;
+      background-color: var(--sidebar-bg);
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      transition: var(--transition);
+      z-index: 100;
+      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-header {
+      padding: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .logo-circle {
+      width: 40px;
+      height: 40px;
+      background: var(--primary-color);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .brand-name {
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 20px 15px;
+      flex-grow: 1;
+    }
+
+    .nav-item {
+      margin-bottom: 8px;
+      position: relative;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .nav-item:hover {
+      background-color: var(--sidebar-hover);
+      color: white;
+      transform: translateX(-5px);
+      /* حركة بسيطة لليسار */
+    }
+
+    .nav-item.active {
+      background-color: var(--primary-color);
+      color: white;
+      box-shadow: 0 4px 12px rgba(139, 60, 69, 0.4);
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .sidebar-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .logout-btn:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    /* ================= MAIN CONTENT ================= */
+    .main-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Header */
+    .top-header {
+      height: 70px;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .header-left h2 {
+      font-size: 18px;
+      color: var(--text-color);
+      font-weight: 600;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: #e2e8f0;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Content Area */
+    .content-wrapper {
+      padding: 30px;
+      overflow-y: auto;
+      height: 100%;
+      position: relative;
+    }
+
+    /* ================= TABS & CARDS ================= */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .content-card {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      padding: 30px;
+      min-height: 400px;
+    }
+
+    .card-header {
+      margin-bottom: 25px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 15px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 70px;
+      }
+
+      .brand-name,
+      .nav-item span,
+      .logout-btn span {
+        display: none;
+      }
+
+      .nav-item {
+        padding: 15px 0;
+        justify-content: center;
+      }
+
+      .sidebar-header {
+        padding: 15px 0;
+        justify-content: center;
+      }
+
+      .content-wrapper {
+        padding: 15px;
+      }
+    }
+
+    /* ==================== NEW: STYLES FOR TABLES & ACTIONS ==================== */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    /* حقول البحث الحديثة */
+    .modern-input {
+      padding: 10px 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      width: 300px;
+      outline: none;
+      font-family: 'Tajawal', sans-serif;
+      transition: var(--transition);
+    }
+
+    .modern-input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(139, 60, 69, 0.1);
+    }
+
+    /* زر الإضافة الرئيسي */
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* حاوية الجدول المتجاوبة */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    /* تصميم الجدول العصري */
+    .modern-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+      /* يضمن عدم انضغاط الجدول في الموبايل */
+    }
+
+    .modern-table th {
+      background-color: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      padding: 15px;
+      text-align: right;
+      font-size: 13px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .modern-table td {
+      padding: 15px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .modern-table tr:hover {
+      background-color: #f8fafc;
+      transition: 0.2s;
+    }
+
+    /* الشارات (Badges) */
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .badge-active {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+
+    /* أخضر فاتح */
+    .badge-inactive {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* أحمر فاتح */
+
+    /* أزرار الإجراءات (طباعة/حذف) */
+    .action-icons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .icon-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .btn-print {
+      background-color: #eff6ff;
+      color: #2563eb;
+    }
+
+    .btn-print:hover {
+      background-color: #dbeafe;
+    }
+
+    .btn-delete {
+      background-color: #fef2f2;
+      color: #dc2626;
+    }
+
+    .btn-delete:hover {
+      background-color: #fee2e2;
+    }
+
+    /* استجابة الموبايل */
+    @media (max-width: 768px) {
+      .action-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .modern-input {
+        width: 100%;
+      }
+
+      .btn-primary {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- الشريط الجانبي -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-circle">DC</div>
+      <div class="brand-name">DriverSys</div>
+    </div>
+
+    <ul class="nav-menu">
+      <!-- التبويب الأول -->
+      <li class="nav-item" onclick="window.location.href='./index.html'"> <!-- SVG Icon: Card/Plus --> <svg
+          viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path
+            d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+        </svg> <span>إصدار بطاقة</span> </li>
+      <!-- التبويب الثاني -->
+      <li class="nav-item" onclick="switchTab('tab-manage-files', this)">
+        <!-- SVG Icon: Files/Folder -->
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z" />
+        </svg>
+        <span>إدارة الملفات</span>
+      </li>
+      <!-- التبويب الثالث -->
+      <li class="nav-item active" onclick="switchTab('tab-manage-users', this)">
+        <!-- SVG Icon: Users -->
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
+        <span>إدارة المستخدمين</span>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">
+        <!-- SVG Icon: Logout -->
+        <svg style="width:20px;height:20px;" viewBox="0 0 24 24">
+          <path fill="currentColor"
+            d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+        </svg>
+        <span>تسجيل الخروج</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- المحتوى الرئيسي -->
+  <main class="main-content">
+    <!-- الشريط العلوي -->
+    <header class="top-header">
+      <div class="header-left">
+        <h2 id="page-title">لوحة التحكم الرئيسية</h2>
+      </div>
+      <div class="header-right">
+        <div class="user-profile">
+          <div class="user-info" style="text-align: left;">
+            <span class="user-name">أحمد محمد</span>
+            <span class="user-role">مدير النظام</span>
+          </div>
+          <div class="avatar">
+            <!-- صورة افتراضية -->
+            <img src="https://ui-avatars.com/api/?name=Admin&background=8B3C45&color=fff" alt="User">
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- منطقة المحتوى القابلة للتبديل -->
+    <div class="content-wrapper">
+      <!-- <section></section> -->
+      <!-- =============== التبويب الأول: إصدار بطاقة (محتواك سيكون هنا) =============== -->
+      <section id="tab-issue-card" class="tab-pane active">
+        <div class="content-card">
+          <div class="card-header">
+            <h3 class="card-title">إدخال وإصدار بطاقة جديدة</h3>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:5px;">يرجى ملء البيانات بدقة لضمان صلاحية
+              البطاقة</p>
+          </div>
+
+          <!-- المكان المخصص لك لوضع كود النموذج -->
+          <div id="content-issue-card">
+            <!-- ضع كود النموذج هنا -->
+            <p style="text-align:center; color:#ccc; padding:40px;">
+              محتوى نموذج إدخال البيانات...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============== التبويب الثاني: إدارة الملفات (محتواك سيكون هنا) =============== -->
+      <!-- =============== التبويب الثاني: إدارة الملفات =============== -->
+      <section id="tab-manage-files" class="tab-pane">
+        <div class="content-card">
+          <div class="card-header">
+            <h3 class="card-title">سجل البطاقات الصادرة</h3>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:5px;">استعراض البطاقات المحفوظة وإدارتها</p>
+          </div>
+
+          <!-- شريط الإجراءات: بحث -->
+          <div class="action-bar">
+            <input type="text" class="modern-input" placeholder="بحث برقم البطاقة أو اسم السائق..."
+              onkeyup="filterTable('filesTable', this.value)">
+          </div>
+
+          <!-- جدول البيانات -->
+          <div class="table-wrapper">
+            <table class="modern-table" id="filesTable">
+              <thead>
+                <tr>
+                  <th>رقم البطاقة</th>
+                  <th>اسم السائق</th>
+                  <th>المنشأة</th>
+                  <th>تاريخ الإصدار</th>
+                  <th>الحالة</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- بيانات تجريبية -->
+                <tr>
+                  <td><strong>11.00537649</strong></td>
+                  <td>أول - عبد العلي</td>
+                  <td>شركة شفلوت التجارية</td>
+                  <td>2025-12-29</td>
+                  <td><span class="badge badge-active">نشط</span></td>
+                  <td>
+                    <div class="action-icons">
+                      <button class="icon-btn btn-print" title="طباعة" onclick="alert('سيتم طلب ملف PDF لهذه البطاقة')">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M19 8h-1V3H6v5H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zM8 5h8v3H8V5zm8 12v2H8v-4h8v2zm2-2v-2H6v2H4v4h12v-4h4z" />
+                        </svg>
+                      </button>
+                      <button class="icon-btn btn-delete" title="حذف" onclick="deleteRow(this)">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>11.00537650</strong></td>
+                  <td>محمد أحمد العلي</td>
+                  <td>مؤسسة النقل السريع</td>
+                  <td>2025-01-15</td>
+                  <td><span class="badge badge-active">نشط</span></td>
+                  <td>
+                    <div class="action-icons">
+                      <button class="icon-btn btn-print" title="طباعة" onclick="alert('سيتم طلب ملف PDF لهذه البطاقة')">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M19 8h-1V3H6v5H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zM8 5h8v3H8V5zm8 12v2H8v-4h8v2zm2-2v-2H6v2H4v4h12v-4h4z" />
+                        </svg>
+                      </button>
+                      <button class="icon-btn btn-delete" title="حذف" onclick="deleteRow(this)">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============== التبويب الثالث: إدارة المستخدمين (محتواك سيكون هنا) =============== -->
+      <!-- =============== التبويب الثالث: إدارة المستخدمين =============== -->
+      <section id="tab-manage-users" class="tab-pane">
+        <div class="content-card">
+          <div class="card-header">
+            <h3 class="card-title">إدارة المستخدمين والصلاحيات</h3>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:5px;">إضافة وحذف المستخدمين المصرح لهم
+              باستخدام النظام</p>
+          </div>
+
+          <!-- شريط الإجراءات: بحث + إضافة -->
+          <div class="action-bar">
+            <input type="text" class="modern-input" placeholder="بحث باسم المستخدم..."
+              onkeyup="filterTable('usersTable', this.value)">
+            <button class="btn-primary" onclick="addNewUser()">
+              <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg>
+              إضافة مستخدم جديد
+            </button>
+          </div>
+
+          <!-- جدول البيانات -->
+          <div class="table-wrapper">
+            <table class="modern-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th>اسم المستخدم</th>
+                  <th>البريد الإلكتروني</th>
+                  <th>الصلاحية (Role)</th>
+                  <th>تاريخ التسجيل</th>
+                  <th>الحالة</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>admin</strong></td>
+                  <td>admin@system.com</td>
+                  <td><span class="badge" style="background:#e0e7ff; color:#3730a3;">مدير النظام</span></td>
+                  <td>2025-01-01</td>
+                  <td><span class="badge badge-active">نشط</span></td>
+                  <td>
+                    <div class="action-icons">
+                      <!-- لا يمكن حذف الأدمن -->
+                      <button class="icon-btn btn-print" title="تعديل">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>user1</td>
+                  <td>user1@transport.com</td>
+                  <td><span class="badge" style="background:#f1f5f9; color:#475569;">موظف إدخال</span></td>
+                  <td>2025-05-20</td>
+                  <td><span class="badge badge-active">نشط</span></td>
+                  <td>
+                    <div class="action-icons">
+                      <button class="icon-btn btn-print" title="تعديل">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                        </svg>
+                      </button>
+                      <button class="icon-btn btn-delete" title="حذف" onclick="deleteRow(this)">
+                        <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    // ================= TAB SWITCH LOGIC =================
+    function switchTab(tabId, navItem) {
+      // 1. إخفاء جميع التبويبات
+      const tabs = document.querySelectorAll('.tab-pane');
+      tabs.forEach(tab => tab.classList.remove('active'));
+
+      // 2. إزالة التنشيط من القائمة الجانبية
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => item.classList.remove('active'));
+
+      // 3. إظهار التبويب المختار
+      document.getElementById(tabId).classList.add('active');
+
+      // 4. تنشيط العنصر في القائمة الجانبية
+      navItem.classList.add('active');
+
+      // 5. (اختياري) تحديث عنوان الصفحة
+      const titles = {
+        'tab-issue-card': 'إصدار بطاقة جديدة',
+        'tab-manage-files': 'إدارة الملفات',
+        'tab-manage-users': 'إدارة المستخدمين'
+      };
+      document.getElementById('page-title').innerText = titles[tabId];
+    }
+
+    function logout() {
+      if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+      }
+    }
+
+    // التحقق من الجلسة
+    window.onload = function () {
+      const token = sessionStorage.getItem('authToken');
+      if (!token) {
+        window.location.href = 'login.html';
+      }
+    }
+    // دالة البحث البسيطة
+    function filterTable(tableId, query) {
+      const filter = query.toLowerCase();
+      const table = document.getElementById(tableId);
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) {
+        let tdArray = rows[i].getElementsByTagName("td");
+        let found = false;
+        for (let j = 0; j < tdArray.length; j++) {
+          if (tdArray[j]) {
+            if (tdArray[j].textContent.toLowerCase().indexOf(filter) > -1) {
+              found = true;
+              break;
+            }
+          }
+        }
+        rows[i].style.display = found ? "" : "none";
+      }
+    }
+
+    // دالة حذف الصف (محاكاة)
+    function deleteRow(btn) {
+      if (confirm('هل أنت متأكد من حذف هذا السجل؟')) {
+        var row = btn.parentNode.parentNode.parentNode;
+        row.style.opacity = '0';
+        setTimeout(function () { row.parentNode.removeChild(row); }, 500);
+      }
+    }
+
+    // دالة إضافة مستخدم (محاكاة)
+    function addNewUser() {
+      alert('سيتم فتح نافذة منبثقة لإضافة مستخدم جديد...');
+    }
+  </script>
+</body>
+
+</html>
